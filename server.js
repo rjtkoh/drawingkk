@@ -1,16 +1,15 @@
 // Import required modules
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Import CORS middleware
+const cors = require('cors');
 
 // Initialize the app
 const app = express();
 
 // Middleware
 app.use(cors()); // Enable CORS for all routes
-app.use(bodyParser.json({ limit: '10mb' })); // Allow payloads up to 10 MB
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true })); // For URL-encoded bodies
-
+app.use(bodyParser.json({ limit: '10mb' })); // Increase payload size limit
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true })); // Handle URL-encoded data
 
 // In-memory data storage
 const prompts = [];
@@ -37,13 +36,14 @@ app.get('/kriskringle/prompt', (req, res) => {
 
 // Submit a completed drawing
 app.post('/kriskringle/completed', (req, res) => {
-    const { id, image } = req.body;
-    const prompt = prompts.find(p => p.id === id);
-    if (!prompt) {
-        return res.status(404).json({ message: "Prompt not found!" });
+    const { title, image } = req.body;
+
+    if (!image) {
+        return res.status(400).json({ message: "Image is required!" });
     }
-    completedDrawings.push({ id, prompt: prompt.prompt, image });
-    res.status(201).json({ message: "Drawing added!" });
+
+    completedDrawings.push({ title: title || "Untitled", image });
+    res.status(201).json({ message: "Drawing added successfully!" });
 });
 
 // Get all completed drawings
