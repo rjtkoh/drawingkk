@@ -8,7 +8,9 @@ const app = express();
 
 // Middleware
 app.use(cors()); // Enable CORS for all routes
-app.use(bodyParser.json()); // Parse JSON bodies
+app.use(bodyParser.json({ limit: '10mb' })); // Allow payloads up to 10 MB
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true })); // For URL-encoded bodies
+
 
 // In-memory data storage
 const prompts = [];
