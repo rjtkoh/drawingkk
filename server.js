@@ -25,12 +25,13 @@ app.post('/kriskringle/prompts', (req, res) => {
     res.status(201).json({ message: "Prompt added!", id });
 });
 
-// Get a random prompt
+// Get a random prompt (and remove it from the list)
 app.get('/kriskringle/prompt', (req, res) => {
     if (prompts.length === 0) {
         return res.status(404).json({ message: "No prompts available!" });
     }
-    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    const randomIndex = Math.floor(Math.random() * prompts.length);
+    const [randomPrompt] = prompts.splice(randomIndex, 1); // Remove the prompt from the array
     res.json(randomPrompt);
 });
 
@@ -49,6 +50,13 @@ app.post('/kriskringle/completed', (req, res) => {
 // Get all completed drawings
 app.get('/kriskringle/completed', (req, res) => {
     res.json(completedDrawings);
+});
+
+// Clear all prompts and drawings (Admin Endpoint)
+app.delete('/kriskringle/clear', (req, res) => {
+    prompts.length = 0; // Clear all prompts
+    completedDrawings.length = 0; // Clear all drawings
+    res.status(200).json({ message: "All prompts and drawings have been cleared!" });
 });
 
 // Start the server
